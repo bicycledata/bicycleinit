@@ -1,0 +1,6 @@
+{
+  "server": "https://bicycledata.vti.se",
+  "wifi": {
+     "bicycledata": "bicycledata"
+  }
+}
