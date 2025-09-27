@@ -17,6 +17,9 @@ mkdir -p "$SENSOR_DIR"
 # Extract the hash from the .bicycledata file
 HASH=$(jq -r '.hash' < .bicycledata)
 
+# Restart bluetooth.service
+systemctl restart bluetooth.service
+
 # Iterate through each sensor entry in the config file
 jq -c '.sensors[]' "$CONFIG_FILE" | while read sensor; do
     # Extract sensor details using jq
