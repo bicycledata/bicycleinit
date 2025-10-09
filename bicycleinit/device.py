@@ -104,6 +104,9 @@ class BicycleDevice:
     # LED3 indicates Bluetooth status
 
     # Enable wifi
+    time.sleep(1)
+    bluetooth.off()
+    time.sleep(1)
     self.start_wifi(ssids, config)
 
     boxui._LED2.on() if api.time(config['server']) else boxui._LED2.off()
@@ -151,11 +154,6 @@ class BicycleDevice:
     else:
       logging.info("'branch' not defined in config file; Skipping pulling updates form git")
 
-    # TODO: handle bluetooth
-    #bluetooth.retsart()
-    bluetooth_status = bluetooth.status()
-    boxui._LED3.on() if bluetooth_status else boxui._LED3.off()
-
     # Setup sensor repos
     os.makedirs('sensors', exist_ok=True)
     sensors = config.get('sensors', [])
@@ -171,6 +169,12 @@ class BicycleDevice:
           logging.error(f"Failed to install requirements for {sensor['name']} from {req_path}: {e}")
 
     self.stop_wifi()  # Disable WiFi to save power until needed again
+
+    time.sleep(1)
+    bluetooth.on()
+    time.sleep(1)
+    bluetooth_status = bluetooth.status()
+    boxui._LED3.on() if bluetooth_status else boxui._LED3.off()
 
     # Run all sensors in their own process
     for sensor in sensors:
@@ -200,6 +204,9 @@ class BicycleDevice:
               boxui.blink_fast()
               logging.info("All sensors terminated - shutting down")
               bicyclebutton.stop_bicyclebutton()
+              time.sleep(1)
+              bluetooth.off()
+              time.sleep(1)
               self.start_wifi(ssids, config)
               try:
                 self.move_all_pending_files()

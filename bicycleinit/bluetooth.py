@@ -9,9 +9,13 @@ def _run(command):
   except subprocess.CalledProcessError as e:
     return None
 
-def retsart():
-  logging.info("Restarting bluetooth service")
-  return _run("sudo systemctl restart bluetooth.service")
+def on():
+  logging.info("Starting bluetooth service")
+  return _run("sudo hciconfig hci0 up")
+
+def off():
+  logging.info("Stopping bluetooth service")
+  return _run("sudo hciconfig hci0 down")
 
 def status():
   # Check if bluetooth service is active
