@@ -100,7 +100,7 @@ class BicycleDevice:
     logging.info(f"Configured SSIDs: {list(ssids)}")
 
     # LED1 indicates WiFi connection status
-    # LED2 indicates backend reachability (could be lan without WiFi)
+    # LED2 indicates GPS status
     # LED3 indicates Bluetooth status
 
     # Enable wifi
@@ -109,7 +109,7 @@ class BicycleDevice:
     time.sleep(1)
     self.start_wifi(ssids, config)
 
-    boxui._LED2.on() if api.time(config['server']) else boxui._LED2.off()
+    api.time(config['server'])
 
     # If not registered, register the device
     if 'registration' not in config:
@@ -221,6 +221,9 @@ class BicycleDevice:
                 shutil.move(os.path.join(self.temp_dir, msg['file']), os.path.join(self.session_dir, msg['file']))
               except Exception as e:
                 logging.error(f"[{sensor_name}] Failed to move file {msg['file']} to session folder: {e}")
+            elif msg['type'] == 'status':
+              if sensor_name == 'bicyclegps':
+                boxui._LED2.on() if msg['online'] else boxui._LED2.off()
             elif msg['type'] == 'log':
               if 'level' in msg and msg['level'] == 'info':
                 logging.info(f"[{sensor_name}] {msg['msg']}")
