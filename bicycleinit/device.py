@@ -103,7 +103,7 @@ class BicycleDevice:
 
     # LED1 indicates WiFi connection status
     # LED2 indicates GPS status
-    # LED3 indicates Bluetooth status
+    # LED3 indicates Radar status
 
     # Enable wifi
     time.sleep(1)
@@ -175,8 +175,7 @@ class BicycleDevice:
     time.sleep(1)
     bluetooth.on()
     time.sleep(1)
-    bluetooth_status = bluetooth.status()
-    boxui._LED3.on() if bluetooth_status else boxui._LED3.off()
+    bluetooth.status()
 
     # Run all sensors in their own process
     for sensor in sensors:
@@ -228,6 +227,8 @@ class BicycleDevice:
               logging.info(f"[{sensor_name}] {msg}")
               if sensor_name == 'bicyclegps':
                 boxui._LED2.on() if msg['status'] == 'online' else boxui._LED2.off()
+              if sensor_name == 'bicycleradar':
+                boxui._LED3.on() if msg['status'] == 'online' else boxui._LED3.off()
             elif msg['type'] == 'log':
               if 'level' in msg and msg['level'] == 'info':
                 logging.info(f"[{sensor_name}] {msg['msg']}")
