@@ -21,7 +21,7 @@ class BicycleSensor:
 
     self._ping_lock = threading.Lock()
     self._msg_times = deque()
-    self._status = "offline"
+    self._status = "init"
 
     self._temp_path = os.path.join('temp', self._session)
     self._target_path = os.path.join('sessions', self._session)
@@ -83,7 +83,7 @@ class BicycleSensor:
     self._thread.join(timeout=5)
     self.close_file()
     self.send_msg({'type': 'log', 'level': 'info', 'msg': f"Sensor is shutting down due to signal {signum} with frame {frame}"})
-    if self._bicycleinit is not None:
+    if self._bicycleinit is not None: # internal sensors set self._bicycleinit to None, i.e. bicyclebutton
       sys.exit(0)
 
   def write_header(self, headers):
