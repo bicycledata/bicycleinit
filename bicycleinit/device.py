@@ -225,6 +225,7 @@ class BicycleDevice:
               except Exception as e:
                 logging.error(f"[{sensor_name}] Failed to move file {msg['file']} to session folder: {e}")
             elif msg['type'] == 'status':
+              logging.info(f"[{sensor_name}] {msg}")
               if sensor_name == 'bicyclegps':
                 boxui._LED2.on() if msg['status'] == 'online' else boxui._LED2.off()
             elif msg['type'] == 'log':
