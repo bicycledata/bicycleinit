@@ -78,12 +78,6 @@ class BicycleSensor:
       else:
         self.open_file()
 
-      # Should probably have its own thread, but for now it's fine here
-      now = time.time()
-      with self._ping_lock:
-        while self._msg_times and now - self._msg_times[0] > self._time_frame:
-          self._msg_times.popleft()
-
   def _handle_exit(self, signum, frame):
     self._shutdown_event.set()
     self._thread.join(timeout=5)
