@@ -21,6 +21,8 @@ class BicycleDevice:
   def __init__(self):
     time.sleep(2)  # Wait a bit for system services to be ready
 
+    self._restart = True
+
     # Create the session name based on date and time
     self.session = datetime.datetime.now(datetime.UTC).strftime("%Y%m%d-%H%M%S")
     self.session_dir = os.path.join('sessions', self.session)
@@ -214,6 +216,7 @@ class BicycleDevice:
               except Exception as e:
                 logging.error(f"shutdown: Final upload failed: {e}")
               boxui.off()
+              self._restart = False
               return
           else:
             if msg['type'] == 'upload':
