@@ -19,10 +19,6 @@ class BicycleSensor:
     self._time_frame = args.get('time_frame', 10)  # seconds
     self._upload_interval = args.get('upload_interval', 60)
 
-    self._ping_lock = threading.Lock()
-    self._msg_times = deque()
-    self._status = "init"
-
     self._temp_path = os.path.join('temp', self._session)
     self._target_path = os.path.join('sessions', self._session)
     self._filename = None
@@ -42,21 +38,15 @@ class BicycleSensor:
     self._thread = threading.Thread(target=self._background_file_creator, daemon=True)
     self._thread.start()
 
+    # Start background thread for pinging
+    self._ping_lock = threading.Lock()
+    self._pings = deque()
+    self._ping_thread = threading.Thread(target=self._background_pinger, daemon=True)
+    self._ping_thread.start()
+
   def ping(self):
-    now = time.time()
     with self._ping_lock:
-      self._msg_times.append(now)
-
-      # Remove old timestamps
-      while self._msg_times and now - self._msg_times[0] > self._time_frame:
-        self._msg_times.popleft()
-
-      # Check online status
-      new_status = "online" if len(self._msg_times) >= self._min_msgs else "offline"
-
-      if new_status != self._status:
-        self._status = new_status
-        self.send_msg({'type': 'status', 'status': self._status})
+      self._pings.append(time.monotonic())
 
   def send_msg(self, msg):
     if self._bicycleinit is None:
@@ -78,9 +68,33 @@ class BicycleSensor:
       else:
         self.open_file()
 
+  def _background_pinger(self):
+    status = "init"
+
+    while not self._shutdown_event.is_set():
+      # Wait for 1s or until shutdown is triggered
+      self._shutdown_event.wait(timeout=1)
+      if self._shutdown_event.is_set():
+        break
+
+      with self._ping_lock:
+        now = time.monotonic()
+
+        # Remove old timestamps
+        while self._pings and now - self._pings[0] > self._time_frame:
+          self._pings.popleft()
+
+        # Check online status
+        new_status = "online" if len(self._pings) >= self._min_msgs else "offline"
+
+      if new_status != status:
+        status = new_status
+        self.send_msg({'type': 'status', 'status': status})
+
   def _handle_exit(self, signum, frame):
     self._shutdown_event.set()
     self._thread.join(timeout=5)
+    self._ping_thread.join(timeout=5)
     self.close_file()
     self.send_msg({'type': 'log', 'level': 'info', 'msg': f"Sensor is shutting down due to signal {signum} with frame {frame}"})
     if self._bicycleinit is not None: # internal sensors set self._bicycleinit to None, i.e. bicyclebutton
