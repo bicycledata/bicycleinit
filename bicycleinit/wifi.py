@@ -8,7 +8,7 @@ def _run(command):
     result = subprocess.check_output(command, shell=True, text=True, stderr=subprocess.STDOUT)
     return result.strip()
   except subprocess.CalledProcessError as e:
-    logging.debug(f"Command failed: {command} -> {e.output.strip()}")
+    logging.error(f"Command failed: {command} -> {e.output.strip()}")
     return None
 
 def turn_on():
@@ -21,7 +21,7 @@ def turn_off():
 
 def connect(ssid, password=None):
   logging.info(f"Connecting to WiFi SSID: {ssid}")
-  return _run(f"sudo nmcli dev wifi connect '{ssid}' password '{password}'")
+  return _run(f"sudo nmcli dev wifi connect '{ssid}'")
 
 def current_connection():
   return _run("nmcli -t -f active,ssid dev wifi | egrep '^yes' | cut -d: -f2")
