@@ -4,7 +4,7 @@ import traceback
 
 from bicycleinit.device import BicycleDevice
 
-if __name__ == '__main__':
+def main():
   device = BicycleDevice()
   try:
     device.main()
@@ -13,5 +13,12 @@ if __name__ == '__main__':
     logging.error(traceback.format_exc())
   finally:
     logging.shutdown()
-    if not device._restart and not os.path.exists('.no-shutdown'):
-      os.system("sudo shutdown now")
+    if device._restart:
+      return
+    if os.path.exists('.no-shutdown'):
+      logging.info("'.no-shutdown' file found, skipping shutdown.")
+      return
+    os.system("sudo shutdown now")
+
+if __name__ == '__main__':
+  main()
