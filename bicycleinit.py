@@ -13,5 +13,5 @@ if __name__ == '__main__':
     logging.error(traceback.format_exc())
   finally:
     logging.shutdown()
-    if not device._restart:
+    if not device._restart and not os.path.exists('.no-shutdown'):
       os.system("sudo shutdown now")
