@@ -145,7 +145,7 @@ class BicycleDevice:
     # upload all pending session data
     # doing it not earlier, to get potential warnings/errors in the new log file
     self.move_all_pending_files()
-    api.upload_pending(config['ident'], config['server'], self.session)
+    api.upload_pending(config['ident'], config['server'], self.session, True)
 
     # Try to upgrade from git
     if 'branch' in config:
@@ -211,7 +211,7 @@ class BicycleDevice:
               self.start_wifi(ssids, config)
               try:
                 self.move_all_pending_files()
-                api.upload_pending(config['ident'], config['server'])
+                api.upload_pending(config['ident'], config['server'], self.session, False)
               except Exception as e:
                 logging.error(f"shutdown: Final upload failed: {e}")
               boxui.off()

@@ -84,7 +84,7 @@ def config(api_url, ident, timeout=5):
     logging.error(f"Config failed: {e}")
     return False
 
-def upload_pending(ident, server, current_session=''):
+def upload_pending(ident, server, current_session, skipCurrentLogFile=False):
   if not os.path.exists('sessions'):
     return
 
@@ -98,7 +98,7 @@ def upload_pending(ident, server, current_session=''):
     files.sort()
     try:
       for file in files:
-        if session == current_session and file == 'bicycleinit.log':
+        if skipCurrentLogFile and session == current_session and file == 'bicycleinit.log':
           continue  # Skip current log file
 
         filepath = os.path.join(session_path, file)
@@ -122,6 +122,10 @@ def upload_pending(ident, server, current_session=''):
         if response.status_code == 200:
           os.remove(filepath)
           logging.info(f"Uploaded and deleted file: {filepath}")
+          if session == current_session and file == 'bicycleinit.log':
+            # Create new empty log file
+            with open(filepath, 'w') as new_log:
+              new_log.write('')
         else:
           logging.warning(f"Failed to upload file {filepath}: {response.status_code}, {response.text}")
           return
