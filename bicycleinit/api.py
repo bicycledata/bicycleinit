@@ -17,7 +17,7 @@ def time(api_url, timeout=5):
       logging.info(f"Server time {content['server_time']}")
       logging.info(f"Time delta  {content['diff']}")
     else:
-      logging.info(f"wifi.backend_reachable: {response.status_code} for {url}")
+      logging.info(f"wifi.time: {response.status_code} for {url}")
     return response.status_code == 200
   except requests.RequestException:
     return False
