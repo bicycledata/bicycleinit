@@ -5,9 +5,10 @@ import time
 
 def _run(command):
   try:
-    result = subprocess.check_output(command, shell=True, text=True)
+    result = subprocess.check_output(command, shell=True, text=True, stderr=subprocess.STDOUT)
     return result.strip()
   except subprocess.CalledProcessError as e:
+    logging.debug(f"Command failed: {command} -> {e.output}")
     return None
 
 def turn_on():

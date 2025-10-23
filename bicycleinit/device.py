@@ -33,7 +33,7 @@ class BicycleDevice:
 
     logging.basicConfig(
       filename=os.path.join(self.session_dir, 'bicycleinit.log'),
-      level=logging.INFO,
+      level=logging.DEBUG,
       format='[%(asctime)s] %(levelname)s: %(message)s',
       datefmt='%Y-%m-%dT%H:%M:%S',
       force=True
