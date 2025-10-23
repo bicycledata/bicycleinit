@@ -8,7 +8,7 @@ def _run(command):
     result = subprocess.check_output(command, shell=True, text=True, stderr=subprocess.STDOUT)
     return result.strip()
   except subprocess.CalledProcessError as e:
-    logging.debug(f"Command failed: {command} -> {e.output}")
+    logging.debug(f"Command failed: {command} -> {e.output.strip()}")
     return None
 
 def turn_on():
