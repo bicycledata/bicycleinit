@@ -2,6 +2,8 @@ import datetime
 import json
 import logging
 import os
+import base64
+import mimetypes
 
 import requests
 
@@ -102,8 +104,24 @@ def upload_pending(ident, server, current_session, skipCurrentLogFile=False):
           continue  # Skip current log file
 
         filepath = os.path.join(session_path, file)
-        with open(filepath, 'r') as f:
-          data = f.read()
+        # Detect if the file is a PNG image and read appropriately
+        _, ext = os.path.splitext(file)
+        ext = ext.lower()
+        data = None
+        encoding = None
+        mimetype = None
+
+        if ext == '.png':
+          # Read binary and base64-encode for JSON transport
+          with open(filepath, 'rb') as f:
+            raw = f.read()
+          data = base64.b64encode(raw).decode('ascii')
+          encoding = 'base64'
+          mimetype = mimetypes.types_map.get(ext, 'application/octet-stream')
+        else:
+          # Default: read as text
+          with open(filepath, 'r') as f:
+            data = f.read()
 
         try:
           datetime.datetime.strptime(file[:16], '%Y%m%d-%H%M%S-')
@@ -118,6 +136,12 @@ def upload_pending(ident, server, current_session, skipCurrentLogFile=False):
           'filename': upload_name,
           'data': data
         }
+
+        # If binary data was used, include encoding and mimetype metadata
+        if encoding is not None:
+          payload['encoding'] = encoding
+        if mimetype is not None:
+          payload['mimetype'] = mimetype
         response = requests.post(f'{server}/api/v2/session/upload', json=payload, timeout=10)
         if response.status_code == 200:
           os.remove(filepath)
