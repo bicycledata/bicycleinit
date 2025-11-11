@@ -111,7 +111,7 @@ def upload_pending(ident, server, current_session, skipCurrentLogFile=False):
         encoding = None
         mimetype = None
 
-        if ext == '.png':
+        if ext in  ['.png', '.jpg', '.jpeg', '.dng']:
           # Read binary and base64-encode for JSON transport
           with open(filepath, 'rb') as f:
             raw = f.read()
