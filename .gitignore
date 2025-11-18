@@ -1,5 +1,10 @@
-/.bicycledata
 /.env/
-/*.log
-/config.json
 /sensors/
+/sessions/
+/temp/
+
+__pycache__/
+
+/.lgd-nfy0
+/.no-shutdown
+/bicycleinit.json
