@@ -1,5 +1,5 @@
 {
-  "branch": "api-v2",
+  "branch": "main",
   "server": "https://bicycledata.vti.se",
   "wifi": {
      "bicycledata": "bicycledata"
