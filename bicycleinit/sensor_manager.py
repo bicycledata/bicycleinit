@@ -1,7 +1,6 @@
 import importlib
 import threading
-import time
-from multiprocessing import Pipe, Process, connection
+from multiprocessing import Pipe, Process
 
 SENSOR_LOCK = threading.Lock()
 

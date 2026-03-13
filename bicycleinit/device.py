@@ -7,7 +7,7 @@ import shutil
 import subprocess
 import sys
 import time
-from multiprocessing import Pipe, Process, connection
+from multiprocessing import connection
 
 from bicycleinit import (
     api,
