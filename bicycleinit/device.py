@@ -213,6 +213,9 @@ class BicycleDevice:
 
                     try:
                         msg = conn.recv()
+                        if sensor_name == "bicyclebutton" and "Proceeding to upload and shutdown." in msg:
+                            boxui.shutdown()  # shutdown all othe sensors too
+
                     except EOFError:
                         conn.close()
                         sensor_manager.SENSOR_CONNS.pop(sensor_name)

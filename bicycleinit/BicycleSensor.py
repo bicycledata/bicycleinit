@@ -116,6 +116,15 @@ class BicycleSensor:
             self.open_file()
         ts = datetime.now(UTC).isoformat()
         data = [str(x) for x in data]
+        if float(data[0]) > 10.0:  # data[0] is duration
+            self.send_msg(
+                {
+                    "type": "log",
+                    "level": "info",
+                    "msg": f"User held button for over 10s. Proceeding to upload and shut down.",
+                }
+            )
+            return  # do not record this button press
         self._file.write(ts + "," + ",".join(data) + "\n")
         self.ping()
 
