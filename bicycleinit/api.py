@@ -1,9 +1,10 @@
+import base64
 import datetime
+import getpass
 import json
 import logging
-import os
-import base64
 import mimetypes
+import os
 
 import requests
 
@@ -27,7 +28,11 @@ def time(api_url, timeout=5):
 def register(api_url, timeout=5):
   # Get hostname, username, and MAC address
   hostname = os.uname().nodename
-  username = os.getlogin()
+
+  try:
+    username = getpass.getuser()
+  except Exception:
+    username = os.environ.get("USER") or "unknown"
 
   # Load configuration from bicycleinit.json
   config_path = 'bicycleinit.json' if os.path.exists('bicycleinit.json') else 'bicycleinit-default.json'
