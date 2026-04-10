@@ -47,6 +47,9 @@ class BicycleDevice:
     logging.info(f"Python version: {sys.version.replace(chr(10), ' ')}")
     logging.info(f"Timestamp (UTC): {datetime.datetime.now(datetime.UTC).isoformat()}")
 
+    total, used, free = shutil.disk_usage('.')
+    logging.info(f"Disk space: Total: {total / (2**30):.2f} GB, Used: {used / (2**30):.2f} GB, Free: {free / (2**30):.2f} GB")
+
     boxui.init()
     boxui.blink()
 
