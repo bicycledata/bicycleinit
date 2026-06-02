@@ -107,9 +107,6 @@ class BicycleDevice:
     # LED1 indicates WiFi connection status
     # LED2 indicates GPS status
     # LED3 indicates Radar status
-
-    bicyclebutton.start_bicyclebutton('bicyclebutton', {'session': self.session, 'gpio': 23, 'upload_interval': 300})
-    debug_mode = bicyclebutton._button.is_pressed
     
     # Enable wifi
     time.sleep(1)
@@ -176,6 +173,9 @@ class BicycleDevice:
         except Exception as e:
           logging.error(f"Failed to install requirements for {sensor['name']} from {req_path}: {e}")
     
+    bicyclebutton.start_bicyclebutton('bicyclebutton', {'session': self.session, 'gpio': 23, 'upload_interval': 300})
+    debug_mode = bicyclebutton._button.is_pressed
+
     if not debug_mode:
       self.stop_wifi()  # Disable WiFi to save power until needed again
 
@@ -189,8 +189,6 @@ class BicycleDevice:
       file, fcn = sensor['entry_point'].split(':')
       sensor['args']['session'] = self.session
       sensor_manager.start_sensor(sensor['name'], 'sensors.' + sensor['name'] + "." + file, fcn, sensor['args'])
-
-    # bicyclebutton.start_bicyclebutton('bicyclebutton', {'session': self.session, 'gpio': 23, 'upload_interval': 300})
 
     while True:
       # Wait for any connection to become ready
