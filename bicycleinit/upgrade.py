@@ -19,6 +19,8 @@ def upgrade(branch: str):
     return False
 
   try:
+    # TODO: This doesn't work - might not switch branch if diverged
+    # something like "git reset --hard origin/<branch>" would probably be better.
     subprocess.run(['git', 'pull', '--ff-only', 'origin', branch], check=True)
     new_hash = subprocess.check_output(['git', 'rev-parse', 'HEAD']).strip()
     if old_hash != new_hash:
